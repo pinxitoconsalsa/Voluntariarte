@@ -9,6 +9,7 @@ import 'features/volunteer/screens/volunteer_home_screen.dart';
 import 'features/volunteer/screens/event_detail_screen.dart';
 import 'features/volunteer/screens/impact_dashboard_screen.dart';
 import 'features/volunteer/screens/volunteer_profile_screen.dart';
+import 'features/volunteer/screens/volunteer_settings_screen.dart';
 import 'models/event_model.dart';
 import 'services/mock_data_service.dart';
 
@@ -83,6 +84,11 @@ class VoluntariArteApp extends StatelessWidget {
           case '/volunteer-profile':
             return MaterialPageRoute(
               builder: (_) => const VolunteerProfileScreen(),
+            );
+          
+          case '/volunteer-settings':
+            return MaterialPageRoute(
+              builder: (_) => const VolunteerSettingsScreen(),
             );
           
           default:

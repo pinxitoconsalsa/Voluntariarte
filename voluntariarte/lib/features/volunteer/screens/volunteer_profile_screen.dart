@@ -29,7 +29,7 @@ class _VolunteerProfileScreenState extends State<VolunteerProfileScreen> {
         // Ya estamos aquí
         break;
       case 3:
-        // Ajustes
+        Navigator.pushNamed(context, '/volunteer-settings');
         break;
     }
   }

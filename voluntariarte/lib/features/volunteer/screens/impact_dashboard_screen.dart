@@ -28,14 +28,13 @@ class _ImpactDashboardScreenState extends State<ImpactDashboardScreen> {
         Navigator.pushNamed(context, '/volunteer-profile');
         break;
       case 3:
-        // Ajustes
+        Navigator.pushNamed(context, '/volunteer-settings');
         break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = MockDataService.mockVolunteer;
     final badges = MockDataService.mockBadges;
     final earnedBadges = badges.where((b) => b.isEarned).toList();
 
@@ -69,7 +68,7 @@ class _ImpactDashboardScreenState extends State<ImpactDashboardScreen> {
                 Expanded(
                   child: _StatCard(
                     icon: Icons.access_time,
-                    value: '${user.totalHours}',
+                    value: '0',
                     label: 'Horas',
                     color: AppColors.neonGreen,
                   ),
@@ -78,7 +77,7 @@ class _ImpactDashboardScreenState extends State<ImpactDashboardScreen> {
                 Expanded(
                   child: _StatCard(
                     icon: Icons.event_available,
-                    value: '${user.eventsCompleted}',
+                    value: '0',
                     label: 'Eventos',
                     color: AppColors.info,
                   ),
@@ -91,7 +90,7 @@ class _ImpactDashboardScreenState extends State<ImpactDashboardScreen> {
                 Expanded(
                   child: _StatCard(
                     icon: Icons.emoji_events,
-                    value: '${earnedBadges.length}',
+                    value: '0',
                     label: 'Medallas',
                     color: AppColors.warning,
                   ),
@@ -100,7 +99,7 @@ class _ImpactDashboardScreenState extends State<ImpactDashboardScreen> {
                 Expanded(
                   child: _StatCard(
                     icon: Icons.trending_up,
-                    value: '${((user.totalHours ?? 0) / 50 * 100).toInt()}%',
+                    value: '0%',
                     label: 'Progreso',
                     color: AppColors.success,
                   ),
@@ -110,7 +109,7 @@ class _ImpactDashboardScreenState extends State<ImpactDashboardScreen> {
             const SizedBox(height: 32),
             
             // Progreso hacia siguiente nivel
-            Text('Progreso hacia Maestro del Tiempo', style: AppTextStyles.h4),
+            Text('Progreso hacia siguiente nivel', style: AppTextStyles.h4),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(16),
@@ -126,13 +125,13 @@ class _ImpactDashboardScreenState extends State<ImpactDashboardScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '${user.totalHours} / 50 horas',
+                        '0 / 50 horas',
                         style: AppTextStyles.bodyLarge.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        '${50 - (user.totalHours ?? 0)} horas restantes',
+                        '50 horas restantes',
                         style: AppTextStyles.bodySmall,
                       ),
                     ],
@@ -141,7 +140,7 @@ class _ImpactDashboardScreenState extends State<ImpactDashboardScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: LinearProgressIndicator(
-                      value: (user.totalHours ?? 0) / 50,
+                      value: 0,
                       minHeight: 12,
                       backgroundColor: AppColors.border,
                       valueColor: AlwaysStoppedAnimation<Color>(AppColors.neonGreen),
@@ -172,53 +171,96 @@ class _ImpactDashboardScreenState extends State<ImpactDashboardScreen> {
             ),
             const SizedBox(height: 16),
             
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 0.85,
-              ),
-              itemCount: earnedBadges.length,
-              itemBuilder: (context, index) {
-                final badge = earnedBadges[index];
-                return _BadgeCard(
-                  name: badge.name,
-                  iconName: badge.iconName,
-                  isEarned: true,
-                );
-              },
-            ),
+            earnedBadges.isEmpty
+                ? Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBackground,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.emoji_events_outlined,
+                          size: 48,
+                          color: AppColors.textSecondary.withOpacity(0.5),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Aún no has desbloqueado ninguna medalla',
+                          style: AppTextStyles.bodyLarge.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Completa eventos para ganar medallas y badges especiales',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.textSecondary.withOpacity(0.7),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  )
+                : GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 0.85,
+                    ),
+                    itemCount: earnedBadges.length,
+                    itemBuilder: (context, index) {
+                      final badge = earnedBadges[index];
+                      return _BadgeCard(
+                        name: badge.name,
+                        iconName: badge.iconName,
+                        isEarned: true,
+                      );
+                    },
+                  ),
             const SizedBox(height: 32),
             
             // Actividad reciente
             Text('Actividad Reciente', style: AppTextStyles.h4),
             const SizedBox(height: 16),
             
-            _ActivityItem(
-              icon: Icons.check_circle,
-              title: 'Evento completado',
-              subtitle: 'Limpieza de Playa - 4 horas',
-              date: 'Hace 3 días',
-              color: AppColors.success,
-            ),
-            const SizedBox(height: 12),
-            _ActivityItem(
-              icon: Icons.emoji_events,
-              title: 'Nueva medalla obtenida',
-              subtitle: 'Mariposa Social',
-              date: 'Hace 1 semana',
-              color: AppColors.warning,
-            ),
-            const SizedBox(height: 12),
-            _ActivityItem(
-              icon: Icons.check_circle,
-              title: 'Evento completado',
-              subtitle: 'Taller de Reciclaje - 3 horas',
-              date: 'Hace 2 semanas',
-              color: AppColors.success,
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppColors.cardBackground,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.history_outlined,
+                    size: 48,
+                    color: AppColors.textSecondary.withOpacity(0.5),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'No hay actividad aún',
+                    style: AppTextStyles.bodyLarge.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Tu actividad aparecerá aquí cuando completes eventos',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary.withOpacity(0.7),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -353,56 +395,3 @@ class _BadgeCard extends StatelessWidget {
   }
 }
 
-class _ActivityItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final String date;
-  final Color color;
-
-  const _ActivityItem({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.date,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: AppTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                )),
-                const SizedBox(height: 2),
-                Text(subtitle, style: AppTextStyles.bodySmall),
-              ],
-            ),
-          ),
-          Text(date, style: AppTextStyles.caption),
-        ],
-      ),
-    );
-  }
-}

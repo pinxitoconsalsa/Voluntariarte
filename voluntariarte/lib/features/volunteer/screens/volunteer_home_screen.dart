@@ -58,7 +58,7 @@ class _VolunteerHomeScreenState extends State<VolunteerHomeScreen> {
         Navigator.pushNamed(context, '/volunteer-profile');
         break;
       case 3:
-        // Ajustes
+        Navigator.pushNamed(context, '/volunteer-settings');
         break;
     }
   }
